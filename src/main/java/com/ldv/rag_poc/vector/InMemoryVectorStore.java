@@ -58,9 +58,9 @@ public class InMemoryVectorStore {
     // ✅ Seed iniziale
     @PostConstruct
     public void initSampleDocs() {
-        addDocument("Il Colosseo è un anfiteatro romano situato a Roma.");
-        addDocument("La Cappella Sistina è famosa per il soffitto dipinto da Michelangelo.");
-        addDocument("La Torre Eiffel si trova a Parigi ed è alta 330 metri.");
+        addDocument("The Colosseum is a Roman amphitheater located in Rome.");
+        addDocument("The Sistine Chapel is famous for its ceiling painted by Michelangelo.");
+        addDocument("The Eiffel Tower is located in Paris and is 330 meters tall.");
     }
 }
 

@@ -27,7 +27,7 @@ public class AskController {
         // Trova i documenti più rilevanti (top 3)
         var relevantDocs = vectorStore.findRelevant(question, 3);
         String context = String.join("\n", relevantDocs);
-        String prompt = context.isEmpty() ? question : ("Contesto: " + context + "\nDomanda: " + question);
+        String prompt = context.isEmpty() ? question : ("Context: " + context + "\nQuestion: " + question);
         String answer = ollamaClient.ask(prompt);
         return Collections.singletonMap("answer", answer);
     }
