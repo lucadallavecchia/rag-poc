@@ -55,7 +55,7 @@ public class InMemoryVectorStore {
         return results;
     }
 
-    // ✅ Seed iniziale
+    //Seed iniziale
     @PostConstruct
     public void initSampleDocs() {
         addDocument("The Colosseum is a Roman amphitheater located in Rome.");
