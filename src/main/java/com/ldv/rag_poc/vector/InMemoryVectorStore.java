@@ -11,14 +11,6 @@ import java.util.*;
 
 @Component
 public class InMemoryVectorStore {
-    private static class Document {
-        String text;
-        double[] embedding;
-        Document(String text, double[] embedding) {
-            this.text = text;
-            this.embedding = embedding;
-        }
-    }
 
     private final List<Document> documents = new ArrayList<>();
 
@@ -78,6 +70,10 @@ public class InMemoryVectorStore {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
     }
 }
 
