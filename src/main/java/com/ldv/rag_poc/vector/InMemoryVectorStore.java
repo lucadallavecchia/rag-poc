@@ -3,6 +3,10 @@ package com.ldv.rag_poc.vector;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Component
@@ -58,9 +62,22 @@ public class InMemoryVectorStore {
     //Seed iniziale
     @PostConstruct
     public void initSampleDocs() {
-        addDocument("The Colosseum is a Roman amphitheater located in Rome.");
-        addDocument("The Sistine Chapel is famous for its ceiling painted by Michelangelo.");
-        addDocument("The Eiffel Tower is located in Paris and is 330 meters tall.");
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/documents.txt")) {
+            if (is == null) {
+                System.err.println("documents.txt not found");
+                return;
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.isBlank()) {
+                        addDocument(line.trim());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
