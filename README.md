@@ -33,8 +33,3 @@ It integrates a local LLM via Ollama (Mistral) with an in-memory vector store, a
 - Java 21
 - Docker (for Ollama runtime)
 - Ollama installed locally with the `mistral` model
-
-### 📥 1. Clone the project
-
-```bash
-git clone https://github.com/your-username/spring-rag-poc.g
