@@ -8,9 +8,9 @@ It integrates a local LLM via Ollama (Mistral) with an in-memory vector store, a
 ## 📌 Features
 
 - ✅ REST API `POST /ask` to receive user questions
-- ✅ In-memory vector store (`InMemoryVectorStore`)
+- 🚧  In-memory vector store (`InMemoryVectorStore`)
 - ✅ Local Ollama (Mistral model) integration via Spring AI
-- ✅ Automatic text chunking for better semantic retrieval
+- 🚧  Automatic text chunking for better semantic retrieval
 
 ---
 
