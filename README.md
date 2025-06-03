@@ -1,7 +1,7 @@
 # 🧠 Spring Boot RAG PoC (Retrieval-Augmented Generation) with Ollama + Mistral
 
 This is a Proof of Concept (PoC) for a RAG (Retrieval-Augmented Generation) system built with Java 21 and Spring Boot.  
-It integrates a local LLM via Ollama (Mistral) with an in-memory vector store, allowing you to ask questions about web content extracted via Firecrawl.
+It integrates a local LLM via Ollama (Mistral) with an in-memory vector store, allowing you to ask questions about a specific context.
 
 ---
 
