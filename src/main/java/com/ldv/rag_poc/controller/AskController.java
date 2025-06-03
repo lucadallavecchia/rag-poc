@@ -24,15 +24,15 @@ public class AskController {
 
     @PostMapping
     public Map<String,String> ask(@RequestBody String question) {
-        // Trova i documenti più rilevanti (top 3) -> vector store inizializzato dentro InMemoryVectorStore.java
+        // Find the top 3 most relevant documents → vector store initialized inside InMemoryVectorStore.java
         var relevantDocs = vectorStore.findRelevant(question, 3);
-        // Crea la stringa di contesto
+        // Create the context string
         String context = String.join("\n", relevantDocs);
-        // Crea il prompt: contesto + domanda
+        // Create the prompt: context + question
         String prompt = context.isEmpty() ? question : ("Context: " + context + "\nQuestion: " + question);
-        // Chiama ollama
+        // Call ollama
         String answer = ollamaClient.ask(prompt);
-        // Risponde
+        // Answer
         return Collections.singletonMap("answer", answer);
     }
 
