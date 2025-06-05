@@ -24,6 +24,11 @@ ext {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+	implementation 'org.jsoup:jsoup:1.17.2'
+	implementation 'ai.djl:api:0.26.0'
+	implementation 'ai.djl.pytorch:pytorch-engine:0.26.0'
+	implementation 'ai.djl.huggingface:tokenizers:0.26.0'
+	//implementation 'ai.djl.huggingface:hub:0.26.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

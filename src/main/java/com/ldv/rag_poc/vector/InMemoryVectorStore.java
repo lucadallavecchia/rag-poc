@@ -1,5 +1,7 @@
 package com.ldv.rag_poc.vector;
 
+import ai.djl.ModelException;
+import ai.djl.translate.TranslateException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -7,20 +9,39 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.util.*;
+import org.jsoup.Jsoup;
 
 @Component
 public class InMemoryVectorStore {
 
     private final List<Document> documents = new ArrayList<>();
+    private BertEmbedder bertEmbedder;
 
-    // Mock embedding: convert string to vector (replace with real embedding logic)
-    private double[] embed(String text) {
-        double[] vec = new double[10];
-        for (int i = 0; i < text.length() && i < 10; i++) {
-            vec[i] = (double) text.charAt(i);
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public InMemoryVectorStore() {
+        try {
+            bertEmbedder = new BertEmbedder();
+        } catch (ModelException | IOException e) {
+            throw new RuntimeException("Failed to initialize BertEmbedder", e);
         }
-        return vec;
+    }
+
+    private double[] embed(String text) {
+        try {
+            float[] emb = bertEmbedder.embed(text);
+            double[] vec = new double[emb.length];
+            for (int i = 0; i < emb.length; i++) {
+                vec[i] = emb[i];
+            }
+            return vec;
+        } catch (TranslateException e) {
+            throw new RuntimeException("Embedding failed", e);
+        }
     }
 
     public void addDocument(String text) {
@@ -59,21 +80,31 @@ public class InMemoryVectorStore {
                 System.err.println("documents.txt not found");
                 return;
             }
+            // Leggi tutto il file come una singola stringa
+            StringBuilder sb = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (!line.isBlank()) {
-                        addDocument(line.trim());
-                    }
+                    sb.append(line).append("\n");
+                }
+            }
+            // Estrai solo il testo dal markup HTML/XML
+            String cleanText = Jsoup.parse(sb.toString()).text();
+            // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 5 frasi)
+            String[] sentences = cleanText.split("(?<=[.!?]) ");
+            int chunkSize = 5;
+            for (int i = 0; i < sentences.length; i += chunkSize) {
+                StringBuilder chunk = new StringBuilder();
+                for (int j = i; j < i + chunkSize && j < sentences.length; j++) {
+                    chunk.append(sentences[j]).append(" ");
+                }
+                String chunkText = chunk.toString().trim();
+                if (!chunkText.isBlank()) {
+                    addDocument(chunkText);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public List<Document> getDocuments() {
-        return documents;
-    }
 }
-
