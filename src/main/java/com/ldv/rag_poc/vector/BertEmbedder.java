@@ -23,6 +23,13 @@ public class BertEmbedder {
                 .optProgress(new ai.djl.training.util.ProgressBar())
                 .build();
         model = ModelZoo.loadModel(criteria);
+
+        // DEBUG
+        System.out.println("|||Model Configs|||");
+        System.out.println("Loaded model: " + model.getName());
+        System.out.println("Model artifacts: " + model.getArtifactNames());
+        System.out.println("Model properties: " + model.getProperties());
+
         predictor = model.newPredictor();
     }
 

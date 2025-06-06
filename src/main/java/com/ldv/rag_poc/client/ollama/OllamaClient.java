@@ -1,4 +1,4 @@
-package com.ldv.rag_poc.client;
+package com.ldv.rag_poc.client.ollama;
 
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;

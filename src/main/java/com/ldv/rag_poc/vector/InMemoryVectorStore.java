@@ -3,6 +3,7 @@ package com.ldv.rag_poc.vector;
 import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -16,6 +17,8 @@ import org.jsoup.Jsoup;
 @Component
 public class InMemoryVectorStore {
 
+    @Value("${phrases.per.chunk:1}")
+    private int chunkSize;
     private final List<Document> documents = new ArrayList<>();
     private BertEmbedder bertEmbedder;
 
@@ -72,7 +75,6 @@ public class InMemoryVectorStore {
         return results;
     }
 
-    //Seed iniziale
     @PostConstruct
     public void initSampleDocs() {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/documents.txt")) {
@@ -90,9 +92,8 @@ public class InMemoryVectorStore {
             }
             // Estrai solo il testo dal markup HTML/XML
             String cleanText = Jsoup.parse(sb.toString()).text();
-            // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 5 frasi)
+            // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 1 frasi)
             String[] sentences = cleanText.split("(?<=[.!?]) ");
-            int chunkSize = 5;
             for (int i = 0; i < sentences.length; i += chunkSize) {
                 StringBuilder chunk = new StringBuilder();
                 for (int j = i; j < i + chunkSize && j < sentences.length; j++) {

@@ -16,13 +16,14 @@ It integrates a local LLM via Ollama (Mistral) with an in-memory vector store, a
 
 ## 🧱 Tech Stack
 
-| Technology     | Description |
-|----------------|-------------|
-| Java 21        | Programming language |
-| Spring Boot    | Backend framework |
-| Spring AI      | For LLM + embeddings integration |
-| Ollama         | Local LLM runtime |
-| Mistral        | LLM model used to generate responses |
+| Technology  | Description                          |
+|-------------|--------------------------------------|
+| Java 21     | Programming language                 |
+| Spring Boot | Backend framework                    |
+| Spring AI   | For LLM + embeddings integration     |
+| Djl         | For embeddings (Bert)                |
+| Ollama      | Local LLM runtime                    |
+| Mistral     | LLM model used to generate responses |
 
 ---
 
