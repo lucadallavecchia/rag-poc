@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.util.*;
+
 import org.jsoup.Jsoup;
 
 @Component
@@ -66,7 +67,7 @@ public class InMemoryVectorStore {
     }
 
     public void addDocumentFromMarkDown(String markdown) {
-        if(!StringUtil.isBlank(markdown)){
+        if (!StringUtil.isBlank(markdown)) {
             String cleanText = Jsoup.parse(markdown).text();
             // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 1 frasi)
             String[] sentences = cleanText.split("(?<=[.!?]) ");

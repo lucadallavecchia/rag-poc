@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class BertEmbedder {
 
@@ -27,13 +28,15 @@ public class BertEmbedder {
                 //.optEngine("PyTorch")
                 .optProgress(new ai.djl.training.util.ProgressBar())
                 .build();
+        long currentTime = System.currentTimeMillis();
+        logger.info("Loading bertembedder model...");
         model = ModelZoo.loadModel(criteria);
+        logger.info("BertEmbedder loading duration: {} ms", (System.currentTimeMillis()) - currentTime);
 
-        // DEBUG
         logger.debug("|||Model Configs|||");
-        logger.debug("Loaded model: " + model.getName());
-        logger.debug("Model artifacts: " + model.getArtifactNames());
-        logger.debug("Model properties: " + model.getProperties());
+        logger.debug("Loaded model: {}", model.getName());
+        logger.debug("Model artifacts: {}", Arrays.toString(model.getArtifactNames()));
+        logger.debug("Model properties: {}", model.getProperties());
 
         predictor = model.newPredictor();
     }

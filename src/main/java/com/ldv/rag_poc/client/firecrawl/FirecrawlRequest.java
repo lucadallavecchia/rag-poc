@@ -6,7 +6,8 @@ public class FirecrawlRequest {
     private String url;
     private List<String> formats;
 
-    public FirecrawlRequest() {}
+    public FirecrawlRequest() {
+    }
 
     public FirecrawlRequest(String url, List<String> formats) {
         this.url = url;
