@@ -7,10 +7,15 @@ import ai.djl.translate.TranslateException;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class BertEmbedder {
+
+    Logger logger = LoggerFactory.getLogger(BertEmbedder.class);
+
     private ZooModel<String, float[]> model;
     private Predictor<String, float[]> predictor;
 
@@ -25,10 +30,10 @@ public class BertEmbedder {
         model = ModelZoo.loadModel(criteria);
 
         // DEBUG
-        System.out.println("|||Model Configs|||");
-        System.out.println("Loaded model: " + model.getName());
-        System.out.println("Model artifacts: " + model.getArtifactNames());
-        System.out.println("Model properties: " + model.getProperties());
+        logger.debug("|||Model Configs|||");
+        logger.debug("Loaded model: " + model.getName());
+        logger.debug("Model artifacts: " + model.getArtifactNames());
+        logger.debug("Model properties: " + model.getProperties());
 
         predictor = model.newPredictor();
     }

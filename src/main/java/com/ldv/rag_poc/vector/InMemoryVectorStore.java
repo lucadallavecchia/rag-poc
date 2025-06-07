@@ -3,6 +3,7 @@ package com.ldv.rag_poc.vector;
 import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
 import jakarta.annotation.PostConstruct;
+import org.jsoup.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -51,17 +52,6 @@ public class InMemoryVectorStore {
         documents.add(new Document(text, embed(text)));
     }
 
-    // Cosine similarity
-    private double cosineSim(double[] a, double[] b) {
-        double dot = 0, normA = 0, normB = 0;
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            normA += a[i] * a[i];
-            normB += b[i] * b[i];
-        }
-        return dot / (Math.sqrt(normA) * Math.sqrt(normB) + 1e-10);
-    }
-
     public List<String> findRelevant(String query, int topK) {
         double[] qVec = embed(query);
         PriorityQueue<Document> pq = new PriorityQueue<>(Comparator.comparingDouble(d -> -cosineSim(qVec, d.embedding)));
@@ -75,7 +65,36 @@ public class InMemoryVectorStore {
         return results;
     }
 
-    @PostConstruct
+    public void addDocumentFromMarkDown(String markdown) {
+        if(!StringUtil.isBlank(markdown)){
+            String cleanText = Jsoup.parse(markdown).text();
+            // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 1 frasi)
+            String[] sentences = cleanText.split("(?<=[.!?]) ");
+            for (int i = 0; i < sentences.length; i += chunkSize) {
+                StringBuilder chunk = new StringBuilder();
+                for (int j = i; j < i + chunkSize && j < sentences.length; j++) {
+                    chunk.append(sentences[j]).append(" ");
+                }
+                String chunkText = chunk.toString().trim();
+                if (!chunkText.isBlank()) {
+                    this.addDocument(chunkText);
+                }
+            }
+        }
+    }
+
+    // Cosine similarity
+    private double cosineSim(double[] a, double[] b) {
+        double dot = 0, normA = 0, normB = 0;
+        for (int i = 0; i < a.length; i++) {
+            dot += a[i] * b[i];
+            normA += a[i] * a[i];
+            normB += b[i] * b[i];
+        }
+        return dot / (Math.sqrt(normA) * Math.sqrt(normB) + 1e-10);
+    }
+
+    /*@PostConstruct
     public void initSampleDocs() {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/documents.txt")) {
             if (is == null) {
@@ -107,5 +126,5 @@ public class InMemoryVectorStore {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

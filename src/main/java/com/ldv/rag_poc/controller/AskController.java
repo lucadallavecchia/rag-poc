@@ -2,6 +2,8 @@ package com.ldv.rag_poc.controller;
 
 import com.ldv.rag_poc.client.ollama.OllamaClient;
 import com.ldv.rag_poc.vector.InMemoryVectorStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,8 @@ import java.util.Map;
 @RequestMapping("/ask")
 public class AskController {
 
+    Logger logger = LoggerFactory.getLogger(AskController.class);
+
     @Value("${number.of.top.chunks:3}")
     private int topK;
     private OllamaClient ollamaClient;
@@ -27,12 +31,12 @@ public class AskController {
 
     @PostMapping
     public Map<String,String> ask(@RequestBody String question) {
-        System.out.println("Question: " + question);
+        logger.info("Question: " + question);
         // Find the top 5 most relevant documents → vector store initialized inside InMemoryVectorStore.java
         var relevantDocs = vectorStore.findRelevant(question, topK);
         // Create the context string
         String context = String.join("\n", relevantDocs);
-        System.out.println("Context: " + context);
+        logger.info("Context: " + context);
         // Create the prompt: context + question
         String prompt = context.isEmpty() ? question : ("Context: " + context + "\nQuestion: " + question);
         // Call ollama
