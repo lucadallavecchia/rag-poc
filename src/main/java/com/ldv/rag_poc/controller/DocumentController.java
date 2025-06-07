@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +49,14 @@ public class DocumentController {
 
     public static class UrlRequest {
         private String url;
-        public String getUrl() { return url; }
-        public void setUrl(String url) { this.url = url; }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
     }
 
     @PostMapping
@@ -59,24 +66,26 @@ public class DocumentController {
 
     private void scrapeDocument(String url) {
 
-        if(!StringUtil.isBlank(url)) {
+        if (!StringUtil.isBlank(url)) {
 
-            logger.info("Calling Firecrawl for URL: " + url);
+            logger.info("Calling Firecrawl for URL: {} ...", url);
             // Call firecrawl
             List<String> formats = List.of("markdown", "html");
+            long currentTime = System.currentTimeMillis();
             FirecrawlResponse response = firecrawlClient.scrape(firecrawlAuthorizationToken, new FirecrawlRequest(url, formats));
-            logger.info("End Firecrawl Call.");
+            logger.info("Firecrawl Call duration: {} ms", (System.currentTimeMillis()) - currentTime);
 
             // debug
             logger.debug("Firecrawl Response:");
-            logger.debug("Firecrawl status: " + response.isSuccess());
-            logger.debug("Firecrawl markdown: " + response.getMarkdown());
+            logger.debug("Firecrawl status: {}", response.isSuccess());
+            logger.debug("Firecrawl markdown: {}", response.getMarkdown());
 
             // add mark
             if (response.getMarkdown() != null) {
-                logger.info("Adding document to vector store from Firecrawl response.");
+                logger.info("Adding document to vector store from Firecrawl response...");
+                currentTime = System.currentTimeMillis();
                 vectorStore.addDocumentFromMarkDown(response.getMarkdown());
-                logger.info("End adding documents.");
+                logger.info("Adding document to vector store duration: {} ms", (System.currentTimeMillis()) - currentTime);
             }
         }
     }

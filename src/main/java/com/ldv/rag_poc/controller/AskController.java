@@ -24,23 +24,26 @@ public class AskController {
     private OllamaClient ollamaClient;
     private InMemoryVectorStore vectorStore;
 
-    public AskController(OllamaClient ollamaClient, InMemoryVectorStore vectorStore){
+    public AskController(OllamaClient ollamaClient, InMemoryVectorStore vectorStore) {
         this.ollamaClient = ollamaClient;
         this.vectorStore = vectorStore;
     }
 
     @PostMapping
-    public Map<String,String> ask(@RequestBody String question) {
-        logger.info("Question: " + question);
+    public Map<String, String> ask(@RequestBody String question) {
+
+        logger.debug("Question: {}", question);
         // Find the top 5 most relevant documents → vector store initialized inside InMemoryVectorStore.java
         var relevantDocs = vectorStore.findRelevant(question, topK);
         // Create the context string
         String context = String.join("\n", relevantDocs);
-        logger.info("Context: " + context);
+        logger.debug("Context: {}", context);
+
         // Create the prompt: context + question
         String prompt = context.isEmpty() ? question : ("Context: " + context + "\nQuestion: " + question);
         // Call ollama
         String answer = ollamaClient.ask(prompt);
+
         // Answer
         return Collections.singletonMap("answer", answer);
     }
