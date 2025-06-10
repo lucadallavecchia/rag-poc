@@ -18,15 +18,16 @@ import java.util.Map;
 public class AskController {
 
     Logger logger = LoggerFactory.getLogger(AskController.class);
-
-    @Value("${number.of.top.chunks:3}")
     private int topK;
     private OllamaClient ollamaClient;
     private InMemoryVectorStore vectorStore;
 
-    public AskController(OllamaClient ollamaClient, InMemoryVectorStore vectorStore) {
+    public AskController(OllamaClient ollamaClient,
+                         InMemoryVectorStore vectorStore,
+                         @Value("${number.of.top.chunks:3}") int topK) {
         this.ollamaClient = ollamaClient;
         this.vectorStore = vectorStore;
+        this.topK = topK;
     }
 
     @PostMapping
