@@ -13,10 +13,10 @@ The context is provided by documents that can be added via URLs, which are then 
 
 ## 📌 Features
 
-- ✅ Firecrawler integration to get the markdown of a web page
-- ✅ Embedding (Djl with all-MiniLM-L6-v2 model)
+- ✅ [Firecrawler](https://www.firecrawl.dev/) integration to get the markdown of a web page
+- ✅ Embedding (Djl with [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) model)
 - 🚧 In-memory vector store (`InMemoryVectorStore`)
-- ✅ Local Ollama (Mistral model) integration via Spring AI
+- ✅ Local [Ollama](https://ollama.com/) ([Mistral](https://ollama.com/library/mistral) model) integration via Spring AI
 - 🚧  Automatic text chunking for better semantic retrieval
 
 ---
