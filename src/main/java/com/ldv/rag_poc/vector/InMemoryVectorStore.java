@@ -1,17 +1,10 @@
 package com.ldv.rag_poc.vector;
 
-import ai.djl.ModelException;
 import ai.djl.translate.TranslateException;
-import jakarta.annotation.PostConstruct;
 import org.jsoup.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.io.IOException;
 import java.util.*;
 
 import org.jsoup.Jsoup;
@@ -19,26 +12,23 @@ import org.jsoup.Jsoup;
 @Component
 public class InMemoryVectorStore {
 
-    @Value("${phrases.per.chunk:1}")
     private int chunkSize;
     private final List<Document> documents = new ArrayList<>();
-    private BertEmbedder bertEmbedder;
+    private CustomEmbedder embedder;
 
     public List<Document> getDocuments() {
         return documents;
     }
 
-    public InMemoryVectorStore() {
-        try {
-            bertEmbedder = new BertEmbedder();
-        } catch (ModelException | IOException e) {
-            throw new RuntimeException("Failed to initialize BertEmbedder", e);
-        }
+    public InMemoryVectorStore(CustomEmbedder embedder,
+                               @Value("${phrases.per.chunk:1}") int chunkSize) {
+        this.chunkSize = chunkSize;
+        this.embedder = embedder;
     }
 
     private double[] embed(String text) {
         try {
-            float[] emb = bertEmbedder.embed(text);
+            float[] emb = embedder.embed(text);
             double[] vec = new double[emb.length];
             for (int i = 0; i < emb.length; i++) {
                 vec[i] = emb[i];

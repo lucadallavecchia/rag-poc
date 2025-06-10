@@ -9,34 +9,39 @@ import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-public class BertEmbedder {
+@Component
+public class CustomEmbedder {
 
-    Logger logger = LoggerFactory.getLogger(BertEmbedder.class);
-
+    Logger logger = LoggerFactory.getLogger(CustomEmbedder.class);
     private ZooModel<String, float[]> model;
     private Predictor<String, float[]> predictor;
 
-    public BertEmbedder() throws ModelException, IOException {
+    public CustomEmbedder(@Value("${model.url:djl://ai.djl.huggingface.pytorch/sentence-transformers/all-MiniLM-L6-v2}") String modelUrl,
+                          @Value("${model.engine:PyTorch}") String modelEngine) throws ModelException, IOException {
         Criteria<String, float[]> criteria = Criteria.builder()
                 .setTypes(String.class, float[].class)
                 .optApplication(Application.NLP.TEXT_EMBEDDING)
-                //.optFilter("backbone", "bert-base-uncased")
-                //.optEngine("PyTorch")
+                .optModelUrls(modelUrl)
+                .optEngine(modelEngine)
                 .optProgress(new ai.djl.training.util.ProgressBar())
                 .build();
-        long currentTime = System.currentTimeMillis();
-        logger.info("Loading bertembedder model...");
-        model = ModelZoo.loadModel(criteria);
-        logger.info("BertEmbedder loading duration: {} ms", (System.currentTimeMillis()) - currentTime);
 
-        logger.debug("|||Model Configs|||");
-        logger.debug("Loaded model: {}", model.getName());
-        logger.debug("Model artifacts: {}", Arrays.toString(model.getArtifactNames()));
-        logger.debug("Model properties: {}", model.getProperties());
+        long currentTime = System.currentTimeMillis();
+
+        logger.info("Loading model...");
+        model = ModelZoo.loadModel(criteria);
+        logger.info("Embedder model loading duration: {} ms", (System.currentTimeMillis()) - currentTime);
+
+        logger.info("|||Model Configs|||");
+        logger.info("Loaded model: {}", model.getName());
+        logger.info("Model artifacts: {}", model.getArtifactNames() != null ? Arrays.toString(model.getArtifactNames()) : "");
+        logger.info("Model properties: {}", model.getProperties());
 
         predictor = model.newPredictor();
     }
