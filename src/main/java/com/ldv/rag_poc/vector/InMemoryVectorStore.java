@@ -59,7 +59,7 @@ public class InMemoryVectorStore {
     public void addDocumentFromMarkDown(String markdown) {
         if (!StringUtil.isBlank(markdown)) {
             String cleanText = Jsoup.parse(markdown).text();
-            // Chunking: suddividi per paragrafi o ogni N frasi (qui ogni 1 frasi)
+            // Chunking: split into paragraphs, or after every N sentences (here, after every 1 sentence)
             String[] sentences = cleanText.split("(?<=[.!?]) ");
             for (int i = 0; i < sentences.length; i += chunkSize) {
                 StringBuilder chunk = new StringBuilder();
