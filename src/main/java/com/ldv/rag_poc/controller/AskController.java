@@ -1,7 +1,9 @@
 package com.ldv.rag_poc.controller;
 
 import com.ldv.rag_poc.client.ollama.OllamaClient;
+import com.ldv.rag_poc.dto.request.AskRequest;
 import com.ldv.rag_poc.vector.InMemoryVectorStore;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,22 +33,27 @@ public class AskController {
     }
 
     @PostMapping
-    public Map<String, String> ask(@RequestBody String question) {
+    public Map<String, String> ask(@RequestBody @Valid final AskRequest request) {
 
-        logger.debug("Question: {}", question);
-        // Find the top 5 most relevant documents → vector store initialized inside InMemoryVectorStore.java
-        var relevantDocs = vectorStore.findRelevant(question, topK);
-        // Create the context string
-        String context = String.join("\n", relevantDocs);
-        logger.debug("Context: {}", context);
+        logger.info("Received question: {}", request.getQuestion());
 
-        // Create the prompt: context + question
-        String prompt = context.isEmpty() ? question : ("Context: " + context + "\nQuestion: " + question);
-        // Call ollama
-        String answer = ollamaClient.ask(prompt);
+        try {
+            var relevantDocs = vectorStore.findRelevant(request.getQuestion(), topK);
+            logger.debug("Found {} relevant documents", relevantDocs.size());
 
-        // Answer
-        return Collections.singletonMap("answer", answer);
+            request.setContext(String.join("\n", relevantDocs));
+            logger.debug("Context: {}", request.getContext());
+
+            String prompt = request.getContext().isEmpty()
+                    ? request.getQuestion()
+                    : ("Context: " + request.getContext() + "\nQuestion: " + request.getQuestion());
+
+            String answer = ollamaClient.ask(prompt);
+            return Collections.singletonMap("answer", answer);
+        } catch (Exception e) {
+            logger.error("Error processing ask request", e);
+            return Collections.singletonMap("answer", "An error occurred while processing your question.");
+        }
     }
 
 }

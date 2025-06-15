@@ -68,8 +68,8 @@ public class DocumentController {
 
         if (!StringUtil.isBlank(url)) {
 
-            logger.info("Calling Firecrawl for URL: {} ...", url);
             // Call firecrawl
+            logger.info("Calling Firecrawl for URL: {} ...", url);
             List<String> formats = List.of("markdown", "html");
             long currentTime = System.currentTimeMillis();
             FirecrawlResponse response = firecrawlClient.scrape(firecrawlAuthorizationToken, new FirecrawlRequest(url, formats));
